@@ -2,6 +2,15 @@
 
 Progetto relativo alla studio dei sistemi di trading e delle realizzazione di un sistema automatico di trading (si spera).
 
+```mermaid
+classDiagram
+    Crawler 
+    class Crawler{
+      
+    }
+```
+
+
 ## Studio
 Di seguito sono riportati alcuni elementi di studio:
 
