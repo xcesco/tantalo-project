@@ -19,3 +19,7 @@ Di seguito sono riportati alcuni elementi di studio:
 ## Indice degli argomenti
 
 * [Crawler](./CRAWLER.md)
+
+## Concetti base
+
+* [Concetti base](./CONCETTI_BASE.md)
