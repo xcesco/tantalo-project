@@ -8,4 +8,9 @@ Un crawler (detto anche web crawler, spider o robot), è un software che analizz
 
 [https://www.alphavantage.co/](https://www.alphavantage.co/ )
 
+Api Key registrata con email `uxcesco@gmail.com`
+`3PDKUISU3KG9GGK1`
+
+We are pleased to provide free stock API service for our global community of users for up to 5 API requests per minute and 500 requests per day. If you would like to target a larger API call volume, please visit premium membership.
+
 Stock data APIs
