@@ -1,0 +1,88 @@
+# https://github.com/bitnami/bitnami-docker-kafka/issues/265
+version: '3'
+services:
+  kafka:
+    image: bitnami/kafka:3.3.1
+    container_name: local-kafka
+    environment:
+      - KAFKA_ENABLE_KRAFT=yes
+      - KAFKA_CFG_PROCESS_ROLES=broker,controller
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093,EXTERNAL://:9094
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092,EXTERNAL://${EXPOSED_URL}:9094
+      - KAFKA_CFG_BROKER_ID=1
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@kafka:9093
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
+      - KAFKA_CFG_NUM_PARTITIONS=3 # Allows up to 3 concurrent workers
+      - EXTRA_ARGS= -javaagent:/usr/share/jmx_exporter/jmx_prometheus_javaagent-0.17.0.jar=29101:/usr/share/jmx_exporter/kafka-broker.yaml
+    ports:
+      - "0.0.0.0:9094:9094"
+    volumes:
+      - ./jmx-exporter:/usr/share/jmx_exporter/
+  #    - kafka-jmx-volume:/jmx-exporter
+
+  prometheus:
+    container_name: local-prometheus
+    image: prom/prometheus:v2.1.0
+    volumes:
+      - ./prometheus/:/etc/prometheus/
+    #  - prometheus-volume:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+    ports:
+      - "9090:9090"
+    depends_on:
+      - kafka
+    restart: always
+
+  influxdb:
+    container_name: local-influxdb
+    image: influxdb:2.6.0
+    ports:
+      - "18086:8086"
+   # depends_on:
+   #   - kafka
+#    environment:
+#      - DOCKER_INFLUXDB_INIT_MODE=setup
+#      - DOCKER_INFLUXDB_INIT_USERNAME=my-user
+#      - DOCKER_INFLUXDB_INIT_PASSWORD=my-password
+#      - DOCKER_INFLUXDB_INIT_ORG=my-org
+#      - DOCKER_INFLUXDB_INIT_BUCKET=my-bucket
+#      - DOCKER_INFLUXDB_INIT_RETENTION=1w
+#      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=my-super-secret-auth-token
+
+  kafka-ui:
+    container_name: local-kafka-ui
+    image: provectuslabs/kafka-ui:v0.5.0
+    ports:
+      - "18080:8080"
+    restart: always
+    depends_on:
+      - kafka
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=local
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
+
+  grafana:
+    container_name: local-grafana
+    image: grafana/grafana:9.3.2
+    depends_on:
+      - prometheus
+    volumes:
+      # - grafana-volume:/var/lib/grafana
+      - ./grafana/provisioning/:/etc/grafana/provisioning/
+    environment:
+      - "GF_SECURITY_ADMIN_USER=kafka"
+      - "GF_SECURITY_ADMIN_PASSWORD=kafka"
+      - "GF_USERS_ALLOW_SIGN_UP=false"
+    ports:
+      - "13000:3000"
+
+
+
+
