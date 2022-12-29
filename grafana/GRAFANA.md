@@ -28,3 +28,11 @@ docker run -d
 
 npm install --global http-server
 http-server grafana/data/
+
+## Come configurare Kafka, Prometeus e Grafana
+Serve al monitoraggio di Kafka
+
+https://levelup.gitconnected.com/kafka-primer-for-docker-how-to-setup-kafka-start-messaging-and-monitor-broker-metrics-in-docker-b4e018e205d1
+https://www.metricfire.com/blog/kafka-monitoring/
+
+https://github.com/rohsin47/kafka-docker-kubernetes/tree/main/docker
