@@ -19,3 +19,6 @@ https://hub.docker.com/_/influxdb
 https://github.com/influxdata/influxdb-client-java
 ```
 
+from(bucket: "btc")
+|> range(start: v.timeRangeStart, stop:v.timeRangeStop)
+
