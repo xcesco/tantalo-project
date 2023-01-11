@@ -26,6 +26,9 @@ http://localhost:9094
 ```
 
 ## Influxdb, database NOSQL per serie storiche
+Influxdb sembra essere una buona soluzione per memorizzare i dati delle quotazioni delle varie valute.
+
+
 ```shell
 flux
 http://influxdb:8086/
@@ -45,7 +48,15 @@ https://docs.influxdata.com/influxdb/v2.6/reference/sample-data/#bitcoin-sample-
 Influxdb
 18086
 
-Grafana
-13000
-
 https://grafana.com/docs/grafana/latest/panels-visualizations/visualizations/time-series/
+
+
+## Grafana
+Accessibile all'url http://localhost:13000/. Le credenziali di default sono `admin/admin1234`,
+che codificate in base64 diventano `YWRtaW46YWRtaW4xMjM0`.
+
+In `phase0` l'obiettivo è fare in modo che `grafana` punti a `infludb`. Per fare questo
+ho prima configurato a mano, e poi cercato riportare la configurazione ottenuta come
+configurazione via script. Le indicazioni le ho trovate [qui](https://community.grafana.com/t/data-source-on-startup/8618/2).
+
+La documentazione sulle API di grafana è disponibile a [questo indirizzo](https://grafana.com/docs/grafana/latest/developers/http_api/data_source/).

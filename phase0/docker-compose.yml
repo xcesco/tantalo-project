@@ -3,7 +3,7 @@ version: '3'
 services:
   kafka:
     image: bitnami/kafka:3.3.1
-    container_name: local-kafka
+    container_name: tantalo-kafka
     environment:
       - KAFKA_ENABLE_KRAFT=yes
       - KAFKA_CFG_PROCESS_ROLES=broker,controller
@@ -21,10 +21,11 @@ services:
       - "0.0.0.0:9094:9094"
     volumes:
       - ./jmx-exporter:/usr/share/jmx_exporter/
-  #    - kafka-jmx-volume:/jmx-exporter
+    #    - kafka-jmx-volume:/jmx-exporter
+    restart: always
 
   prometheus:
-    container_name: local-prometheus
+    container_name: tantalo-prometheus
     image: prom/prometheus:v2.1.0
     volumes:
       - ./prometheus/:/etc/prometheus/
@@ -41,35 +42,38 @@ services:
     restart: always
 
   influxdb:
-    container_name: local-influxdb
+    container_name: tantalo-influxdb
     image: influxdb:2.6.0
     ports:
       - "18086:8086"
-   # depends_on:
-   #   - kafka
-#    environment:
-#      - DOCKER_INFLUXDB_INIT_MODE=setup
-#      - DOCKER_INFLUXDB_INIT_USERNAME=my-user
-#      - DOCKER_INFLUXDB_INIT_PASSWORD=my-password
-#      - DOCKER_INFLUXDB_INIT_ORG=my-org
-#      - DOCKER_INFLUXDB_INIT_BUCKET=my-bucket
-#      - DOCKER_INFLUXDB_INIT_RETENTION=1w
-#      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=my-super-secret-auth-token
+    # depends_on:
+    #   - kafka
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=admin
+      - DOCKER_INFLUXDB_INIT_PASSWORD=admin1234
+      - DOCKER_INFLUXDB_INIT_ORG=fitness
+      - DOCKER_INFLUXDB_INIT_BUCKET=misure
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=2abdb6a7-ea6e-4044-a051-5f1a99fed42c
+    volumes:
+      - ./influxdb/scripts:/docker-entrypoint-initdb.d
+    #      - ./influxdb/influxdb.conf:/etc/influxdb/influxdb.conf
+    restart: always
 
   kafka-ui:
-    container_name: local-kafka-ui
+    container_name: tantalo-kafka-ui
     image: provectuslabs/kafka-ui:v0.5.0
     ports:
       - "18080:8080"
-    restart: always
     depends_on:
       - kafka
     environment:
       - KAFKA_CLUSTERS_0_NAME=local
       - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
+    restart: always
 
   grafana:
-    container_name: local-grafana
+    container_name: tantalo-grafana
     image: grafana/grafana:9.3.2
     depends_on:
       - prometheus
@@ -77,11 +81,12 @@ services:
       # - grafana-volume:/var/lib/grafana
       - ./grafana/provisioning/:/etc/grafana/provisioning/
     environment:
-      - "GF_SECURITY_ADMIN_USER=kafka"
-      - "GF_SECURITY_ADMIN_PASSWORD=kafka"
+      - "GF_SECURITY_ADMIN_USER=admin"
+      - "GF_SECURITY_ADMIN_PASSWORD=admin1234"
       - "GF_USERS_ALLOW_SIGN_UP=false"
     ports:
       - "13000:3000"
+    restart: always
 
 
 
