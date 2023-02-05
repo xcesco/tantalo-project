@@ -8,26 +8,26 @@ deleteDatasources:
 
 # list of datasources to insert/update depending
 datasources:
-- name: Prometheus
-  type: prometheus
-  access: proxy
-  orgId: 1
-  url: http://prometheus:9090
-  password:
-  user:
-  database:
-  basicAuth: false
-  basicAuthUser:
-  basicAuthPassword:
-  withCredentials:
-  isDefault: true
-  jsonData:
-     graphiteVersion: "1.1"
-     tlsAuth: false
-     tlsAuthWithCACert: false
-  secureJsonData:
-    tlsCACert: "..."
-    tlsClientCert: "..."
-    tlsClientKey: "..."
-  version: 1
-  editable: true
+  - id: 2
+    uid: XgjvichVz
+    orgId: 1
+    name: InfluxDB
+    type: influxdb
+    typeName: InfluxDB
+    typeLogoUrl: public/app/plugins/datasource/influxdb/img/influxdb_logo.svg
+    access: proxy
+    url: http://influxdb:8086
+    user: ''
+    database: ''
+    basicAuth: false
+    isDefault: false
+    jsonData:
+      defaultBucket: misure
+      httpMode: POST
+      organization: trading
+      version: Flux
+    secureJsonData:
+      token: "2abdb6a7-ea6e-4044-a051-5f1a99fed42c"
+    secureJsonFields:
+      token: true
+    readOnly: false

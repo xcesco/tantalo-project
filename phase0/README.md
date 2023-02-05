@@ -22,8 +22,13 @@ http://localhost:18080/
 
 Kafka risponde si interfaccia ai publisher ed ai consumer dalla porta 
 ```shell
-http://localhost:9094
+http://localhost:19094
 ```
+Alcune informazioni sulla configurazione. Alcuni link:
+
+- [kafka-listeners-explained](https://www.confluent.io/blog/kafka-listeners-explained/)
+- [running-kafka-locally-with-docker](https://lankydan.dev/running-kafka-locally-with-docker)
+- [kafka-client-cannot-connect-to-broker-on-aws-on-docker-etc](https://www.confluent.io/blog/kafka-client-cannot-connect-to-broker-on-aws-on-docker-etc/).
 
 ## Influxdb, database NOSQL per serie storiche
 Influxdb sembra essere una buona soluzione per memorizzare i dati delle quotazioni delle varie valute.
