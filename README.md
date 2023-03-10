@@ -24,7 +24,7 @@ Di seguito sono riportati alcuni elementi di studio:
 ## Concetti base
 
 * [Concetti base](./CONCETTI_BASE.md)
-* 
+
 ## Elastic search
 
 * [Elastic search](./elk/ELASTIC.md)

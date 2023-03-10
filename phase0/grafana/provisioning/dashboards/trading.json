@@ -110,7 +110,7 @@
             "type": "influxdb",
             "uid": "XgjvichVz"
           },
-          "query": "from(bucket: \"historical_tick\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"historical_tick\")\n  |> filter(fn: (r) =>  r[\"_field\"] == \"close\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)  \n  |> yield(name: \"mean\")",
+          "query": "from(bucket: \"historical_tick\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"historical_tick\")\n  |> filter(fn: (r) => r.symbol == \"${Symbol}\")\n  |> filter(fn: (r) =>  r[\"_field\"] == \"close\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)  \n  |> yield(name: \"mean\")",
           "refId": "A"
         }
       ],
@@ -203,7 +203,7 @@
             "type": "influxdb",
             "uid": "XgjvichVz"
           },
-          "query": "from(bucket: \"historical_tick\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r[\"_measurement\"] == \"historical_tick\")\n  |> filter(fn: (r) =>  r[\"_field\"] == \"close\" or r[\"_field\"] == \"high\" or r[\"_field\"] == \"low\" or r[\"_field\"] == \"open\" or r[\"_field\"] == \"volume\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: true)",
+          "query": "from(bucket: \"historical_tick\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r.symbol == \"${Symbol}\")\n  |> filter(fn: (r) => r[\"_measurement\"] == \"historical_tick\")\n  |> filter(fn: (r) =>  r[\"_field\"] == \"close\" or r[\"_field\"] == \"high\" or r[\"_field\"] == \"low\" or r[\"_field\"] == \"open\" or r[\"_field\"] == \"volume\")\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)",
           "refId": "A"
         }
       ],
@@ -216,7 +216,63 @@
   "style": "dark",
   "tags": [],
   "templating": {
-    "list": []
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "BTC/EUR",
+          "value": "BTC/EUR"
+        },
+        "datasource": {
+          "type": "influxdb",
+          "uid": "XgjvichVz"
+        },
+        "definition": "from(bucket: \"historical_tick\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> keep(columns:[\"symbol\"])\n  |>distinct(column: \"symbol\")",
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "name": "Symbol0",
+        "options": [],
+        "query": "from(bucket: \"historical_tick\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> keep(columns:[\"symbol\"])\n  |>distinct(column: \"symbol\")",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": "LTC/EUR",
+          "value": "LTC/EUR"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "name": "Symbol",
+        "options": [
+          {
+            "selected": false,
+            "text": "BTC/EUR",
+            "value": "BTC/EUR"
+          },
+          {
+            "selected": false,
+            "text": "ETH/EUR",
+            "value": "ETH/EUR"
+          },
+          {
+            "selected": true,
+            "text": "LTC/EUR",
+            "value": "LTC/EUR"
+          }
+        ],
+        "query": "BTC/EUR,ETH/EUR,LTC/EUR",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      }
+    ]
   },
   "time": {
     "from": "now-2y",
@@ -226,6 +282,6 @@
   "timezone": "",
   "title": "Trading",
   "uid": "EKUStgo4k",
-  "version": 1,
+  "version": 4,
   "weekStart": ""
 }

@@ -5,7 +5,6 @@ In questa fase l'obiettivo è quello di impostare i vari componenti.
 - Kafka: sistema di streming basato sul pattern publish-subscriber
 - Grafana: sistema di monitoring
 
-Il sistema costruito eseguendo
 ```shell
 docker-compose up -d
 ```
