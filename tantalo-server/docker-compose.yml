@@ -1,0 +1,79 @@
+version: '3'
+
+services:
+  mqtt:
+    container_name: tantalo-mosquitto
+    image: eclipse-mosquitto:2.0.15
+    ports:
+      - "1883:1883" # MQTT
+    volumes:
+      - "${PWD}/mosquitto/config/mosquitto.conf:/mosquitto/config/mosquitto.conf"
+    healthcheck:
+      test: [ "CMD", "mosquitto_sub", "-t", "$$SYS/#", "-C", "1", "-i", "healthcheck", "-W", "3" ]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+    restart: always
+
+  influxdb:
+    container_name: tantalo-influxdb
+    image: influxdb:2.7.1-alpine
+    ports:
+      - "18086:8086"
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=admin
+      - DOCKER_INFLUXDB_INIT_PASSWORD=admin1234
+      - DOCKER_INFLUXDB_INIT_ORG=trading
+      - DOCKER_INFLUXDB_INIT_BUCKET=tick
+      - DOCKER_INFLUXDB_INIT_RETENTION=72h
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=2abdb6a7-ea6e-4044-a051-5f1a99fed42c
+    volumes:
+      # Mount for influxdb data directory and configuration
+      - ${PWD}/influxdb/data:/var/lib/influxdb2:rw
+      - ${PWD}/influxdb/scripts:/docker-entrypoint-initdb.d
+    #  - ./influxdb/influxdb.conf:/etc/influxdb/influxdb.conf
+    healthcheck:
+      test: "curl -f http://influxdb:8086/ping"
+      interval: 5s
+      timeout: 10s
+      retries: 5
+    restart: always
+
+  telegraf:
+    container_name: tantalo-telegraf
+    image: telegraf:1.26-alpine
+    volumes:
+      # Mount for telegraf config
+      - "${PWD}/telegraf/mytelegraf.conf:/etc/telegraf/telegraf.conf:ro"
+    environment:
+      - INFLUX_TOKEN=2abdb6a7-ea6e-4044-a051-5f1a99fed42c
+  #   env_file:
+  #     - influxv2.env
+    depends_on:
+      - influxdb
+      - mqtt
+    links:
+      - influxdb
+      - mqtt
+    restart: always
+
+  grafana:
+    container_name: tantalo-grafana
+    image: grafana/grafana:9.5.2
+    environment:
+      - "GF_SECURITY_ADMIN_USER=admin"
+      - "GF_SECURITY_ADMIN_PASSWORD=admin1234"
+      - "GF_USERS_ALLOW_SIGN_UP=false"
+      - "GF_INSTALL_PLUGINS=gapit-htmlgraphics-panel"
+    volumes:
+      # - grafana-volume:/var/lib/grafana
+      - "${PWD}/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources"
+      - "${PWD}/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards"
+    ports:
+      - "3000:3000"
+    depends_on:
+      - influxdb
+    links:
+      - influxdb
+    restart: always
